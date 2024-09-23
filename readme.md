@@ -4,7 +4,7 @@ En este repositorio encontrarás los scripts que vayamos realizando en clase.
 
 ## Secciones
 
-- [Primeros scripts Python (limpiar datos)](./primeros-scripts-python)
+- [pythonI_limpiando_datos](./primeros-scripts-python)
 
 Cada sección contiene ejercicios y ejemplos que cubren los temas vistos en clase. Los scripts están organizados en carpetas para facilitar su acceso.
 
