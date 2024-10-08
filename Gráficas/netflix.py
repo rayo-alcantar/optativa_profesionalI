@@ -1,8 +1,12 @@
 ﻿# Ángel De Jesús Alcántar Garza
+#Gráficos de la database netflix.
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import plotly.express as px
+
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -100,8 +104,7 @@ plt.title('Proporción de Películas vs Series', fontsize=16)
 
 plt.tight_layout()
 plt.show()
-Comentario sobre el gráfico de pastel de 'Proporción de Películas vs Series':
-En este gráfico podemos observar que la mayor parte del contenido en Netflix está compuesto por películas, representando aproximadamente el 60% del total, mientras que las series constituyen el 40%. Esto sugiere que aunque Netflix es bien conocido por sus series originales, todavía tiene una mayor oferta de películas en su catálogo. Esta información puede ser útil para aquellos interesados en la oferta de contenido y la diversidad entre películas y series dentro de la plataforma.
+#En este gráfico podemos observar que la mayor parte del contenido en Netflix está compuesto por películas, representando aproximadamente el 60% del total, mientras que las series constituyen el 40%. Esto sugiere que aunque Netflix es bien conocido por sus series originales, todavía tiene una mayor oferta de películas en su catálogo. Esta información puede ser útil para aquellos interesados en la oferta de contenido y la diversidad entre películas y series dentro de la plataforma.
 
 # Gráfico de barras para mostrar el Top 10 de países con más producciones
 plt.figure(figsize=(16, 10))
@@ -221,3 +224,55 @@ plt.tight_layout()
 # Mostrar el gráfico
 plt.show()
 #En este gráfico observamos que los ratings promedio de los contenidos en Netflix se han mantenido relativamente constantes a lo largo de los años, con algunas variaciones menores. No se observa una tendencia clara hacia un aumento o disminución en las calificaciones. Esto sugiere que el tipo de contenido en términos de clasificación ha permanecido estable, independientemente del año de lanzamiento.
+
+#interactivo
+fig = px.scatter(df, x='release_year', y='duration', color='type',
+                 hover_data=['title', 'rating'],
+                 title='Duración de películas/series por año de lanzamiento',
+                 labels={'release_year': 'Año de lanzamiento', 'duration': 'Duración (minutos)', 'type': 'Tipo'})
+fig.show()
+
+#top 10 paises con más produciones.
+top_countries = df['country'].value_counts().nlargest(10)
+fig = px.bar(top_countries, x=top_countries.index, y=top_countries.values,
+             title='Top 10 países con más producciones',
+             labels={'country': 'País', 'y': 'Número de producciones'})
+fig.show()
+#la interpretación es la misma, estados unidos lidereando la producción de contenido.
+
+#Gráfico de pastel interactivo.
+fig = px.pie(df, names='type', title='Distribución de películas y series')
+fig.show()
+#la interpretación es la misma: En este gráfico podemos observar que la mayor parte del contenido en Netflix está compuesto por películas, representando aproximadamente el 60% del total, mientras que las series constituyen el 40%. Esto sugiere que aunque Netflix es bien conocido por sus series originales, todavía tiene una mayor oferta de películas en su catálogo. Esta información puede ser útil para aquellos interesados en la oferta de contenido y la diversidad entre películas y series dentro de la plataforma.
+
+#histograma interactivo
+fig = px.histogram(df, x='rating_numeric', nbins=20,
+                   title='Distribución de calificaciones',
+                   labels={'rating_numeric': 'Calificación'})
+fig.show()
+#El gráfico muestra que la mayoría de las calificaciones se concentran en el rango alto, específicamente en la calificación 4, seguida por la calificación 3. Esto sugiere que la mayoría de las evaluaciones son positivas. Las calificaciones más bajas, como 0, 1 y 2, son mucho menos frecuentes, indicando que hay pocos casos de evaluaciones negativas o muy bajas.
+
+
+#produciones contra el año
+yearly_counts = df['release_year'].value_counts().sort_index()
+fig = px.line(x=yearly_counts.index, y=yearly_counts.values,
+              title='Tendencia de producciones por año',
+              labels={'x': 'Año','y': 'Produciones'})
+fig.show()
+#El gráfico muestra una tendencia de producciones a lo largo del tiempo. Desde 1950 hasta aproximadamente el año 2000, las producciones se mantuvieron estables y bajas. A partir del año 2000, se observa un crecimiento exponencial en las producciones, alcanzando su punto máximo alrededor de 2015. Después de este pico, hay una caída rápida y pronunciada hacia 2020. Esta tendencia sugiere un periodo de crecimiento acelerado seguido de una disminución abrupta, lo que podría indicar cambios significativos en la industria o el mercado durante esos años.
+
+#grafico bigote
+fig = px.box(df, x='type', y='duration',
+             title='Distribución de duración por tipo de contenido',
+              labels={'type': 'Tipo','duration': 'Duración'})
+fig.show()
+#El gráfico de caja y bigotes muestra que las películas tienen una duración más variable en comparación con los programas de televisión. La mediana de la duración de las películas está alrededor de 100 minutos, con un rango intercuartílico que va de aproximadamente 75 a 125 minutos. Hay varios valores atípicos que superan los 200 minutos. En contraste, los programas de televisión tienen una duración mucho más consistente, con la mayoría de los valores concentrados cerca de cero y pocos valores atípicos. Esto sugiere que las películas tienden a ser más largas y variadas en duración que los programas de televisión.
+
+numeric_df = df[['release_year', 'duration', 'rating_numeric']]
+corr_matrix = numeric_df.corr()
+fig = go.Figure(data=go.Heatmap(z=corr_matrix.values,
+                                x=corr_matrix.columns,
+                                y=corr_matrix.columns,
+                                colorscale='Viridis'))
+fig.update_layout(title='Mapa de calor de correlaciones')
+fig.show()
